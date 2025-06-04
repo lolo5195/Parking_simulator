@@ -18,6 +18,16 @@ Opłata parkingowa zależy od:
 - czasu parkowania,
 - rodzaju paliwa.
 
+
+##  Struktura projektu
+
+### Klasy i relacje:
+
+- `Vehicle` *(klasa abstrakcyjna)* – bazowa dla wszystkich pojazdów. Zawiera wspólne atrybuty, takie jak numer rejestracyjny, masa, czas wjazdu.
+- `StandardCar`, `Motorcycle`, `DeliveryVan` – klasy dziedziczące z `Vehicle`, implementujące specyficzne cechy (np. waga, opłaty, typ paliwa).
+- `ParkingLot` – zarządza listą pojazdów, umożliwia dodawanie i usuwanie, obliczanie opłat.
+- `FeeCalculator` *(interfejs)* – umożliwia rozszerzalność opłat w zależności od typu pojazdu.
+- `TimeHelper` – pomocnicza klasa do obsługi czasu wejścia/wyjścia.
 ---
 
 ## Przykładowe użycie
