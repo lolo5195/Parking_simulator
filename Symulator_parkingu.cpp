@@ -3,6 +3,7 @@
 #include <vector>
 #include <memory>
 #include <algorithm>
+#include <iomanip>
 #include <iostream>
 using namespace std;
 
@@ -45,6 +46,7 @@ public:
         if (registrationNumber.find_first_of("ABCDEFGHIJKLMNOPQRSTUVWXYZ") == string::npos) {
             throw invalid_argument("Registration number must contain at least one letter.");
         }
+        
         return registrationNumber; 
     }
     time_t getEntryTime() const { return entryTime; }
@@ -127,7 +129,7 @@ public:
         cout << "Vehicle: " << vehicle->getRegistrationNumber() << endl;
         cout << "Issue Time: " << ctime(&issueTime);
         cout << "Exit Time: " << ctime(&exitTime);
-        cout << "Fee: " << fee << " zl" << endl;
+        cout << "Fee: " << fixed << setprecision(2) << fee << " zl" << endl;
     }
 };
 
@@ -139,8 +141,15 @@ public:
     Parking(int capacity_) : capacity(capacity_) {} 
 
     void registerVehicle(shared_ptr<Vehicle> vehicle) {
+        for (const auto& v : vehicles) {
+        if (v->getRegistrationNumber() == vehicle->getRegistrationNumber()) {
+            cout << "Pojazd o tym numerze rejestracyjnym juz jest na parkingu!" << endl;
+            return;
+        }
+        }
         if (vehicles.size() < capacity) {
             vehicles.push_back(vehicle);
+            cout << "Pojazd zarejestrowany: " << vehicle->getRegistrationNumber() << endl;
         } else {
             cout << "Parking is full!" << endl;
         }
@@ -167,7 +176,10 @@ public:
 };
 
 int main() {
-    Parking parking(3);
+	int poj;
+	cout<<"Podaj ilosc miejsc na parkingu."<<endl;
+	cin>>poj;
+    Parking parking(poj);
     cout << "Uruchomiono symulator parkingu. Wpisz 'dodaj', 'wyrejestruj' lub 'lista' (exit, by zakonczyc):" << endl;
     string command;
 
@@ -182,7 +194,7 @@ int main() {
                 cin >> vehicleType;
                 
                 if (vehicleType < 1 || vehicleType > 3) {
-                    cout << "Błąd: Nieprawidłowy typ pojazdu. Użyj 1, 2 lub 3." << endl;
+                    cout << "Blad: Nieprawidlowy typ pojazdu. Uzyj 1, 2 lub 3." << endl;
                     break;
                 }
 
@@ -196,7 +208,7 @@ int main() {
                         cout << "Typ paliwa (1 - Electric, 2 - Petrol, 3 - Diesel): ";
                         cin >> fuelType;
                         if (fuelType < 1 || fuelType > 3) {
-                            throw invalid_argument("Nieprawidłowy typ paliwa. Użyj 1, 2 lub 3.");
+                            throw invalid_argument("Nieprawidlowy typ paliwa. Uzyj 1, 2 lub 3.");
                         }
                         string fuel = (fuelType == 1) ? "Electric" : (fuelType == 2) ? "Petrol" : "Diesel";
                         parking.registerVehicle(make_shared<StandardCar>(reg, time(nullptr), weight, fuel));
@@ -206,20 +218,19 @@ int main() {
                         cout << "Typ furgonetki (1 - lekka, 2 - ciezka): ";
                         cin >> vanType;
                         if (vanType < 1 || vanType > 2) {
-                            throw invalid_argument("Nieprawidłowy typ furgonetki. Użyj 1 lub 2.");
+                            throw invalid_argument("Nieprawidlowy typ furgonetki. Uzyj 1 lub 2.");
                         }
                         cout << "Typ paliwa (1 - Electric, 2 - Petrol, 3 - Diesel): ";
                         cin >> fuelType;
                         if (fuelType < 1 || fuelType > 3) {
-                            throw invalid_argument("Nieprawidłowy typ paliwa. Użyj 1, 2 lub 3.");
+                            throw invalid_argument("Nieprawidlowy typ paliwa. Uzyj 1, 2 lub 3.");
                         }
                         string fuel = (fuelType == 1) ? "Electric" : (fuelType == 2) ? "Petrol" : "Diesel";
                         VanType type = (vanType == 1) ? VanType::light : VanType::heavy;
                         parking.registerVehicle(make_shared<DeliveryVan>(reg, time(nullptr), weight, type, fuel));
                     }
-                    cout << "Pojazd pomyślnie zarejestrowany." << endl;
                 } catch (const invalid_argument& e) {
-                    cout << "Błąd: " << e.what() << endl;
+                    cout << "Blad: " << e.what() << endl;
                 }
                 break;
             }
@@ -237,11 +248,11 @@ int main() {
                             break;
                         }
                     } catch (const invalid_argument& e) {
-                        cout << "Błąd: " << e.what() << endl;
+                        cout << "Blad: " << e.what() << endl;
                     }
                 }
                 if (!found) {
-                    cout << "Pojazd o numerze rejestracyjnym " << reg << " nie został znaleziony." << endl;
+                    cout << "Pojazd o numerze rejestracyjnym " << reg << " nie zostal znaleziony." << endl;
                 }
                 break;
             }
@@ -249,19 +260,19 @@ int main() {
                 if (parking.ReturnVehicles().empty()) {
                     cout << "Parking jest pusty." << endl;
                 } else {
-                    cout << "Lista zaparkowanych pojazdów:" << endl;
+                    cout << "Lista zaparkowanych pojazdow:" << endl;
                     for (auto& v : parking.ReturnVehicles()) {
                         try {
                             cout << v->getRegistrationNumber() << endl;
                         } catch (const invalid_argument& e) {
-                            cout << "Błąd: " << e.what() << endl;
+                            cout << "Blad: " << e.what() << endl;
                         }
                     }
                 }
                 break;
             }
             default:
-                cout << "Nieznane polecenie. Użyj 'dodaj', 'wyrejestruj' lub 'lista'." << endl;
+                cout << "Nieznane polecenie. Uzyj 'dodaj', 'wyrejestruj' lub 'lista'." << endl;
                 break;
         }
         cout << "Wpisz 'dodaj', 'wyrejestruj' lub 'lista' (exit, by zakonczyc):" << endl;
